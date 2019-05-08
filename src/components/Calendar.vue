@@ -17,7 +17,7 @@
       <tr v-for="week in 6">
         <td class="day" v-for="day in 7">
           <!-- <div>{{getNextDate()}}</div> Create a Day component -->
-          <day :date="getNextDate()"></day>
+          <day :class="{currentDay: isCurrentDay()}" :date="getNextDate()"></day>
         </td>
       </tr>
     </table>
@@ -46,6 +46,7 @@ export default {
     return {
       dateTime: null,
       calendarArray: [],
+      currentDay: -1,
     };
   },
   watch : {
@@ -70,6 +71,13 @@ export default {
         case 12: return {month: "December", numDays: 31};
       }
     },
+    isCurrentDay() {
+      if(this.calendarArray[nextDate] === this.currentDay) {
+        return true;
+      }else{
+        return false;
+      }
+    },
     isLeapYear() {
       if(this.year % 4 === 0) {
         if(this.year % 100 !== 0 && this.year % 400 !== 0) {
@@ -82,6 +90,7 @@ export default {
       nextDate = 0;
       this.dateTime = new Date(this.year, this.month - 1, 1);
       this.calendarArray = [];
+      this.currentDay = -1;
       // get the starting day
       let startingDay = this.dateTime.getDay();
       let currentDate = 1;
@@ -102,6 +111,10 @@ export default {
         this.calendarArray.push(0);
       }
     
+      let now = new Date();
+      if(this.dateTime.getMonth() === now.getMonth() && this.dateTime.getYear() === now.getYear()) {
+        this.currentDay = now.getDate();
+      }
     },
     getNextDate() {
       return this.calendarArray[nextDate++];
@@ -143,5 +156,9 @@ td div.no-day {
 td.day div {
   height: 100%;
   width: 100%;
+}
+
+.currentDay {
+  background-color: lightgreen;
 }
 </style>
